@@ -48,12 +48,11 @@ public class CartService {
         cart.clear();
     }
 
-    // Clear cart manually
+
     public void clearCart() {
         cart.clear();
     }
 
-    // Getter for cart (if needed)
     public ArrayList<CartItem> getCart() {
         return cart;
     }

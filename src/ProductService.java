@@ -46,12 +46,10 @@ public class ProductService {
         }
     }
 
-    // Getter for persistence
     public ArrayList<Product> getProducts() {
         return products;
     }
 
-    // Setter for persistence (loading from file)
     public void setProducts(ArrayList<Product> loadedProducts) {
         this.products = loadedProducts;
     }
