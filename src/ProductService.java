@@ -38,7 +38,6 @@ public class ProductService {
         }
     }
 
-    // List all products (optionally for admin)
     public void listAllProducts() {
         System.out.println("----- All Products -----");
         for (int i = 0; i < products.size(); i++) {

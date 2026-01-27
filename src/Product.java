@@ -15,7 +15,6 @@ public class Product {
         this.active = true;
     }
 
-    // --- Getters / Setters ---
     public String getId(){ return id; }
     public String getName(){ return name; }
     public double getPrice(){ return price; }
