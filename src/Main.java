@@ -156,119 +156,121 @@ public class Main {
         boolean back = false;
         while(!back) {
             System.out.println("\n--- Buyer Menu ---");
-            System.out.println("1. Browse Products  2. Add to Cart  3. View Cart  4. Checkout  5. Add Review  6. Add / Update Rating  7. View Review/s of Product  8. View Ratings of Product  9. View Average Rating of Product  10. Back");
+            System.out.println("1. Browse Products  2. View Cart  3. Checkout  4. Back");
             System.out.print("Choice: "); int ch = sc.nextInt(); sc.nextLine();
 
             switch(ch) {
-                case 1: productService.browseProducts(); break;
-                case 2:
-                    System.out.print("Product ID to buy: "); String id = sc.nextLine();
-                    Product p = productService.findProduct(id);
-                    if(p == null || !p.isActive()){ System.out.println("Invalid product"); break; }
-                    System.out.print("Quantity: "); int qty = sc.nextInt(); sc.nextLine();
-                    cart.addItem(p, qty);
-                    break;
-                case 3: cart.viewCart(); break;
-                case 4: cart.checkout(); break;
-                case 5:
-                    System.out.print("Enter Product ID: ");
-                    String reviewProductId = sc.nextLine();
+                case 1:
+                    boolean back1 = false;
+                    while(!back1){
+                        productService.browseProducts();
+                        System.out.println("1. Add to Cart  2. View Cart 3. Add Review");
+                        System.out.println("4. Add / Update Rating  5. View Review/s of Product  6. View Ratings of Product");
+                        System.out.println("7. Back");
+                        System.out.print("Choice: "); int ch1 = sc.nextInt(); sc.nextLine();
 
-                    System.out.print("Enter Comment: ");
-                    String comment = sc.nextLine();
+                        switch(ch1) {
+                            case 1:
+                                System.out.print("Product ID to buy: "); String id = sc.nextLine();
+                                Product p = productService.findProduct(id);
+                                if(p == null || !p.isActive()){ System.out.println("Invalid product"); break; }
+                                System.out.print("Quantity: "); int qty = sc.nextInt(); sc.nextLine();
+                                cart.addItem(p, qty);
+                                break;
+                            case 2: cart.viewCart(); break;
+                            case 3:
+                                System.out.print("Enter Product ID: ");
+                                String reviewProductId = sc.nextLine();
 
-                    reviewService.addReview(
-                            reviewProductId,
-                            buyer.getUsername(),
-                            comment
-                    );
+                                System.out.print("Enter Comment: ");
+                                String comment = sc.nextLine();
 
-                    System.out.println("Review added successfully.");
-                    break;
-                case 6:
+                                reviewService.addReview(
+                                        reviewProductId,
+                                        buyer.getUsername(),
+                                        comment
+                                );
 
-                    System.out.print("Enter Product ID: ");
-                    String ratingProductId = sc.nextLine();
+                                System.out.println("Review added successfully.");
+                                break;
+                            case 4:
+                                System.out.print("Enter Product ID: ");
+                                String ratingProductId = sc.nextLine();
 
-                    System.out.print("Enter Rating (1-5): ");
-                    int ratingValue = Integer.parseInt(sc.nextLine());
+                                System.out.print("Enter Rating (1-5): ");
+                                int ratingValue = Integer.parseInt(sc.nextLine());
 
-                    boolean success = ratingService.addOrUpdateRating(
-                            ratingProductId,
-                            buyer.getUsername(),
-                            ratingValue
-                    );
+                                boolean success = ratingService.addOrUpdateRating(
+                                        ratingProductId,
+                                        buyer.getUsername(),
+                                        ratingValue
+                                );
 
-                    if (success) {
-                        System.out.println("Rating saved successfully.");
-                    } else {
-                        System.out.println("Invalid rating. Must be between 1 and 5.");
-                    }
+                                if (success) {
+                                    System.out.println("Rating saved successfully.");
+                                } else {
+                                    System.out.println("Invalid rating. Must be between 1 and 5.");
+                                }
 
-                    break;
-                case 7:
+                                break;
+                            case 5:
+                                System.out.print("Enter Product ID: ");
+                                String viewReviewProductId = sc.nextLine();
 
-                    System.out.print("Enter Product ID: ");
-                    String viewReviewProductId = sc.nextLine();
+                                ArrayList<Review> reviews =
+                                        reviewService.getReviewsForProduct(viewReviewProductId);
 
-                    ArrayList<Review> reviews =
-                            reviewService.getReviewsForProduct(viewReviewProductId);
+                                if (reviews.size() == 0) {
+                                    System.out.println("No reviews found.");
+                                } else {
 
-                    if (reviews.size() == 0) {
-                        System.out.println("No reviews found.");
-                    } else {
+                                    for (int i = 0; i < reviews.size(); i++) {
 
-                        for (int i = 0; i < reviews.size(); i++) {
+                                        Review r = reviews.get(i);
 
-                            Review r = reviews.get(i);
+                                        System.out.println("User: " + r.getBuyerUsername());
+                                        System.out.println("Comment: " + r.getComment());
+                                        System.out.println("----------------------");
+                                    }
+                                }
 
-                            System.out.println("User: " + r.getBuyerUsername());
-                            System.out.println("Comment: " + r.getComment());
-                            System.out.println("----------------------");
+                                break;
+                            case 6:
+                                System.out.print("Enter Product ID: ");
+                                String viewRatingProductId = sc.nextLine();
+
+                                ArrayList<Rating> ratings =
+                                        ratingService.getRatingsForProduct(viewRatingProductId);
+
+                                String avgStars =
+                                        ratingService.getAverageRatingStars(viewRatingProductId);
+
+                                if (ratings.size() == 0) {
+                                    System.out.println("No ratings found.");
+                                } else {
+
+                                    for (int i = 0; i < ratings.size(); i++) {
+
+                                        Rating r = ratings.get(i);
+
+                                        System.out.println("User: " + r.getBuyerUsername());
+                                        System.out.println("Rating: " +
+                                                ratingService.convertToStars(r.getRating()));
+                                        System.out.println("----------------------");
+                                    }
+                                    System.out.println("Average Rating: " + avgStars);
+                                    System.out.println("----------------------");
+                                }
+
+                                break;
+                            case 7: back1 = true; break;
+                            default: System.out.println("Invalid choice!");
                         }
                     }
-
                     break;
-                case 8:
-
-                    System.out.print("Enter Product ID: ");
-                    String viewRatingProductId = sc.nextLine();
-
-                    ArrayList<Rating> ratings =
-                            ratingService.getRatingsForProduct(viewRatingProductId);
-
-                    if (ratings.size() == 0) {
-                        System.out.println("No ratings found.");
-                    } else {
-
-                        for (int i = 0; i < ratings.size(); i++) {
-
-                            Rating r = ratings.get(i);
-
-                            System.out.println("User: " + r.getBuyerUsername());
-                            System.out.println("Rating: " +
-                                    ratingService.convertToStars(r.getRating()));
-                            System.out.println("----------------------");
-                        }
-                    }
-
-                    break;
-                case 9:
-
-                    System.out.print("Enter Product ID: ");
-                    String avgProductId = sc.nextLine();
-
-                    String avgStars =
-                            ratingService.getAverageRatingStars(avgProductId);
-
-                    if (avgStars.equals("")) {
-                        System.out.println("No ratings yet.");
-                    } else {
-                        System.out.println("Average Rating: " + avgStars);
-                    }
-
-                    break;
-                case 10: back = true; break;
+                case 2: cart.viewCart(); break;
+                case 3: cart.checkout(); break;
+                case 4: back = true; break;
                 default: System.out.println("Invalid choice!");
             }
         }
