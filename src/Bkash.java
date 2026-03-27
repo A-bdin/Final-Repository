@@ -1,32 +1,52 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 
 class Bkash {
-    private HashMap<String, Double> accounts = new HashMap<>();
-    private HashMap<String, String> pins = new HashMap<>();
+
+    private class Account {
+        String phone;
+        double balance;
+        String pin;
+
+        Account(String phone, double balance, String pin) {
+            this.phone = phone;
+            this.balance = balance;
+            this.pin = pin;
+        }
+    }
+
+    private ArrayList<Account> accounts = new ArrayList<>();
 
     public Bkash() {
-        accounts.put("01711111111", 1000.0);
-        pins.put("01711111111", "1234");
+        accounts.add(new Account("01711111111", 1000.0, "1234"));
+    }
+
+    private Account findAccount(String phone) {
+        for (Account acc : accounts) {
+            if (acc.phone.equals(phone)) {
+                return acc;
+            }
+        }
+        return null;
     }
 
     public boolean pay(String phone, String pin, double amount) {
 
-        if (!accounts.containsKey(phone)) {
+        Account acc = findAccount(phone);
+
+        if (acc == null) {
             System.out.println("Account not found");
             return false;
         }
 
-        if (!pins.get(phone).equals(pin)) {
+        if (!acc.pin.equals(pin)) {
             System.out.println("Wrong PIN");
             return false;
         }
 
-        double balance = accounts.get(phone);
-
-        if (balance >= amount) {
-            accounts.put(phone, balance - amount);
+        if (acc.balance >= amount) {
+            acc.balance -= amount;
             System.out.println("bKash payment successful");
-            System.out.println("Remaining balance: " + (balance - amount));
+            System.out.println("Remaining balance: " + acc.balance);
             return true;
         }
 
