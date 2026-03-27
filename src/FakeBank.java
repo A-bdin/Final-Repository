@@ -1,26 +1,46 @@
-import java.util.HashMap;
+import java.util.ArrayList;
 
 class FakeBank {
-    private HashMap<String, Double> accounts = new HashMap<>();
+
+    private class Account {
+        String card;
+        double balance;
+
+        Account(String card, double balance) {
+            this.card = card;
+            this.balance = balance;
+        }
+    }
+
+    private ArrayList<Account> accounts = new ArrayList<>();
 
     public FakeBank() {
-        accounts.put("1111-2222", 1000.0);
-        accounts.put("3333-4444", 500.0);
+        accounts.add(new Account("1111-2222", 1000.0));
+        accounts.add(new Account("3333-4444", 500.0));
+    }
+
+    private Account findAccount(String card) {
+        for (Account acc : accounts) {
+            if (acc.card.equals(card)) {
+                return acc;
+            }
+        }
+        return null;
     }
 
     public boolean pay(String card, double amount) {
 
-        if (!accounts.containsKey(card)) {
+        Account acc = findAccount(card);
+
+        if (acc == null) {
             System.out.println("Card not found");
             return false;
         }
 
-        double balance = accounts.get(card);
-
-        if (balance >= amount) {
-            accounts.put(card, balance - amount);
+        if (acc.balance >= amount) {
+            acc.balance -= amount;
             System.out.println("Card payment successful");
-            System.out.println("Remaining balance: " + (balance - amount));
+            System.out.println("Remaining balance: " + acc.balance);
             return true;
         }
 
