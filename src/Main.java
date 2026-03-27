@@ -269,7 +269,58 @@ public class Main {
                     }
                     break;
                 case 2: cart.viewCart(); break;
-                case 3: cart.checkout(); break;
+                case 3:
+
+    PaymentService paymentService = new PaymentService();
+    FakeBank bank = new FakeBank();
+    Bkash bkash = new Bkash();
+
+    double total = paymentService.calculateTotal(cart);
+
+    if (total == 0) {
+        System.out.println("Cart is empty.");
+        break;
+    }
+
+    System.out.println("Total amount: $" + total);
+
+    System.out.println("Choose payment method:");
+    System.out.println("1. Card");
+    System.out.println("2. bKash");
+    System.out.println("3. Cash on Delivery");
+
+    int choicePay = sc.nextInt();
+    sc.nextLine();
+
+    PaymentStrategy strategy = null;
+
+    if (choicePay == 1) {
+        System.out.print("Enter card number: ");
+        String card = sc.nextLine();
+        strategy = new CreditCardPayment(card, bank);
+    } 
+    else if (choicePay == 2) {
+        System.out.print("Enter phone: ");
+        String phone = sc.nextLine();
+
+        System.out.print("Enter PIN: ");
+        String pin = sc.nextLine();
+
+        strategy = new BkashPayment(phone, pin, bkash);
+    }
+    else if (choicePay == 3) {
+        strategy = new CashOnDelivery();
+    }
+
+    if (strategy != null) {
+        boolean success = paymentService.processPayment(cart, strategy);
+
+        if (success) {
+            cart.checkout(); // ⚠️ appel EXISTANT (très important)
+        }
+    }
+
+    break;
                 case 4: back = true; break;
                 default: System.out.println("Invalid choice!");
             }
