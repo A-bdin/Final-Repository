@@ -30,9 +30,9 @@ class PaymentService {
         boolean success = strategy.pay(total);
 
         if (success) {
-            System.out.println("Payment successful ✅");
+            System.out.println("Payment successful ...");
         } else {
-            System.out.println("Payment failed ❌");
+            System.out.println("Payment failed ...");
         }
 
         return success;
